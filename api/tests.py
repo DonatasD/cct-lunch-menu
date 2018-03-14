@@ -1,5 +1,5 @@
 from django.test import TestCase
-from .models import Employee
+from .models import Employee, Restaurant
 from rest_framework.test import APIClient
 from rest_framework import status
 from django.urls import reverse
@@ -30,3 +30,27 @@ class EmployeeViewTestCase(TestCase):
         response = self.client.get(reverse('employee'))
         self.assertEquals(response.status_code, status.HTTP_200_OK)
 
+
+class RestaurantModelTestCase(TestCase):
+    def setUp(self):
+        self.restaurant_name = "test name"
+        self.restaurant = Restaurant(name=self.restaurant_name)
+
+    def test_create_restaurant(self):
+        self.restaurant.save()
+        self.assertIsNotNone(Restaurant.objects.filter(name=self.restaurant_name).first())
+
+
+class RestaurantViewTestCase(TestCase):
+    def setUp(self):
+        self.apiClient = APIClient()
+        self.restaurant_name = "test name in json"
+        self.restaurant_json = {'name': self.restaurant_name}
+
+    def test_api_create_restaurant(self):
+        response = self.client.post(reverse('restaurant'), self.restaurant_json, format="json")
+        self.assertEquals(response.status_code, status.HTTP_201_CREATED)
+
+    def test_api_get_restaurants(self):
+        response = self.client.get(reverse('restaurant'))
+        self.assertEquals(response.status_code, status.HTTP_200_OK)
