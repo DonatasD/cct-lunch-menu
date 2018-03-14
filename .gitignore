@@ -2,3 +2,4 @@
 *.iml
 *.sqlite3
 __pycache__/
+*.log
