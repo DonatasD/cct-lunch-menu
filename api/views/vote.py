@@ -23,7 +23,11 @@ class VoteView(generics.ListCreateAPIView):
     @api_view(['GET'])
     def today_result(self):
         today = datetime.today().date()
-        qs = Vote.objects.filter(menu__date=today).values('menu_id').annotate(count=Count('menu__id')).order_by('-count')
+        qs = Vote.objects\
+            .filter(menu__date=today)\
+            .values('menu_id')\
+            .annotate(count=Count('menu__id'))\
+            .order_by('-count')
         results = {
             "date": today,
             "results": list(qs)
