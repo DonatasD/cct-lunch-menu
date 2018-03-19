@@ -7,6 +7,7 @@ from rest_framework.decorators import api_view
 from rest_framework.response import Response
 
 from api.models.vote import Vote
+from api.serializers.result import ResultListSerializer
 from api.serializers.vote import VoteSerializer
 
 logger = logging.getLogger(__name__)
@@ -21,5 +22,12 @@ class VoteView(generics.ListCreateAPIView):
 
     @api_view(['GET'])
     def today_result(self):
-        votes = Vote.objects.filter(menu__date=datetime.today().date()).values('menu').annotate(count=Count('menu__id'))
-        return Response(votes)
+        today = datetime.today().date()
+        qs = Vote.objects.filter(menu__date=today).values('menu_id').annotate(count=Count('menu__id')).order_by('count')
+        results = {
+            "date": today,
+            "results": list(qs)
+        }
+        results_serializer_data = ResultListSerializer(results).data
+        logger.info("Generated today results: {0}".format(results_serializer_data))
+        return Response(results_serializer_data)
