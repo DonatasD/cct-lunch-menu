@@ -7,11 +7,14 @@
 * pip
 
 ### Install dependencies
+```
 pip install -r requirements.txt
-
+```
 ### Run application tests
+```
 python manage.py test
-
+```
 ### Run application (using port 8080)
+```
 python manage.py runserver 8080
-
+```
